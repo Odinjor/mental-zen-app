@@ -19,9 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase init
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Force dark status bar icons
   SystemChrome.setSystemUIOverlayStyle(
@@ -40,9 +38,7 @@ class MentalZenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        Provider<AuthService>(create: (_) => AuthService()),
-      ],
+      providers: [Provider<AuthService>(create: (_) => AuthService())],
       child: MaterialApp(
         title: 'Mental Zen',
         debugShowCheckedModeBanner: false,
@@ -77,11 +73,9 @@ class MentalZenApp extends StatelessWidget {
       scaffoldBackgroundColor: kBackground,
 
       colorScheme: const ColorScheme.dark(
-        background: kBackground,
         surface: kSurface,
         primary: kPrimary,
         secondary: kSecondary,
-        onBackground: kTextPrimary,
         onSurface: kTextPrimary,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
@@ -144,12 +138,10 @@ class MentalZenApp extends StatelessWidget {
       ),
 
       // Cards
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: kCard,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
 
       // Inputs
@@ -173,8 +165,10 @@ class MentalZenApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFE05C5C), width: 1.5),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
 
       // Elevated buttons
@@ -182,7 +176,7 @@ class MentalZenApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: kPrimary,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: kPrimary.withOpacity(0.4),
+          disabledBackgroundColor: kPrimary.withValues(alpha: 0.4),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -215,34 +209,30 @@ class MentalZenApp extends StatelessWidget {
         backgroundColor: kCard,
         labelStyle: GoogleFonts.nunito(color: kTextSecondary, fontSize: 12),
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
 
       // Snackbar
       snackBarTheme: SnackBarThemeData(
         backgroundColor: kCard,
         contentTextStyle: GoogleFonts.nunito(color: kTextPrimary),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         behavior: SnackBarBehavior.floating,
       ),
 
       // Dialog
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: kCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         titleTextStyle: GoogleFonts.playfairDisplay(
           color: kTextPrimary,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
-        contentTextStyle:
-            GoogleFonts.nunito(color: kTextSecondary, fontSize: 14),
+        contentTextStyle: GoogleFonts.nunito(
+          color: kTextSecondary,
+          fontSize: 14,
+        ),
       ),
     );
   }
