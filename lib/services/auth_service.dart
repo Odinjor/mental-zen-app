@@ -7,7 +7,11 @@ class AuthService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Sign up with email/password
-  Future<UserCredential> signUp(String email, String password, String name) async {
+  Future<UserCredential> signUp({
+    required String email,
+    required String password,
+    required String displayName,
+  }) async {
     // 1. Create the auth account
     final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
@@ -16,8 +20,13 @@ class AuthService {
 
     // 2. Immediately create the Firestore profile document under their UID
     // This is what "unlocks" their private collections
+    // Also set the Firebase Auth display name
+    await credential.user!.updateDisplayName(displayName);
+
+    // 2. Immediately create the Firestore profile document under their UID
+    // This is what "unlocks" their private collections
     await _db.collection('users').doc(credential.user!.uid).set({
-      'displayName': name,
+      'displayName': displayName,
       'email': email,
       'createdAt': FieldValue.serverTimestamp(),
       'onboardingComplete': false,
@@ -27,7 +36,10 @@ class AuthService {
   }
 
   // Sign in
-  Future<UserCredential> signIn(String email, String password) async {
+  Future<UserCredential> signIn({
+    required String email,
+    required String password,
+  }) async {
     return await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
