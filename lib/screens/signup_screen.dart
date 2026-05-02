@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/user_profile.dart';
 import '../services/auth_service.dart';
-import '../services/firebase_service.dart';
 import 'home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -23,7 +21,6 @@ class _SignupScreenState extends State<SignupScreen> {
   String? _error;
 
   final _authService = AuthService();
-  final _firebaseService = FirebaseService();
 
   @override
   void dispose() {
@@ -48,18 +45,6 @@ class _SignupScreenState extends State<SignupScreen> {
         displayName: _nameCtrl.text.trim(),
       );
 
-      // Create Firestore profile using the now-signed-in user
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        await _firebaseService.createUserProfile(UserProfile(
-          uid: currentUser.uid,
-          displayName: _nameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          createdAt: DateTime.now(),
-          onboardingComplete: true,
-        ));
-      }
-
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         PageRouteBuilder(
@@ -70,21 +55,28 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
         (_) => false,
       );
+    } on FirebaseAuthException catch (e) {
+      setState(() => _error = _friendlyError(e.code));
     } catch (e) {
-      setState(() => _error = _friendlyError(e.toString()));
+      setState(() => _error = 'Something went wrong: ${e.toString()}');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  String _friendlyError(String raw) {
-    if (raw.contains('email-already-in-use')) {
-      return 'An account with this email already exists.';
+  String _friendlyError(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'An account with this email already exists.';
+      case 'weak-password':
+        return 'Password is too weak. Use at least 6 characters.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'network-request-failed':
+        return 'No internet connection. Please try again.';
+      default:
+        return 'Sign-up failed ($code). Please try again.';
     }
-    if (raw.contains('weak-password')) {
-      return 'Password is too weak. Use at least 6 characters.';
-    }
-    return 'Something went wrong. Please try again.';
   }
 
   @override
